@@ -20,10 +20,45 @@ Download [*ConceptNet Numberbatch*](https://github.com/commonsense/conceptnet-nu
 ## Object detection
 Set up [YOLO9000](https://github.com/philipperemy/yolo-9000) with GPU support according to the instructions in README.md
 
-Process video frames with the detector YOLO9000 to collect object information.
+Copy *darknet_command.py* and *darknet_command_true.py* to *./yolo-9000/darknet*, and process video frames with the detector YOLO9000 to collect object information.
+```
+cd ./yolo-9000/darknet
+python darknet_command.py
+python darknet_command_true.py
+```
 
-## Preprocess video data
-Split large video into video clips and split the large video corpus into three different corpus for conditional relative frequency computation, model training, and testing. 
+## Preprocess video with object information
+Cut long videos into 60-second video clips, select video clips with at least five distinct objects, and split the selected corpus into three sets for model training, validation, and testing.
+```
+cd ./label_process
+python video_clips.py
+python select_video.py
+python split_video.py
+```
 
-## Optimization
-Optimize video queries with different methods.
+## Video selection query optimization
+Train the BERT regression model on YouTube-8M Segments data and apply the online learning strategy
+```
+cd ./optimizer/BERT_YouTube
+python train_youtube.py
+python finetune_youtube.py
+```
+
+Select target objects
+```
+cd ./optimizer
+python select_obj.py
+python selecy_2obj.py
+```
+
+Optimize video selection queries (one target object per query)
+```
+cd ./optimizer
+python optimizer.py --all_candidates True --optimization visual --dataset Youtube-8M_seg --repeat 1 --checkpoint finetune_youtube/checkpoint-1500 --index_percent 100 --result_name _finetune_all
+```
+
+Optimize video selection queries (two target objects per query)
+```
+cd ./optimizer
+python optimizer_2obj.py --all_candidates True --optimization visual --dataset Youtube-8M_seg --repeat 1 --checkpoint finetune_youtube/checkpoint-1500 --result_name _finetune_2obj_all
+```
