@@ -37,13 +37,6 @@ python split_video.py
 ```
 
 ## Video selection query optimization
-Train the BERT regression model on YouTube-8M Segments data and apply the online learning strategy
-```
-cd ./optimizer/BERT_YouTube
-python train_youtube.py
-python finetune_youtube.py
-```
-
 Select target objects
 ```
 cd ./optimizer
@@ -51,14 +44,29 @@ python select_obj.py
 python selecy_2obj.py
 ```
 
-Optimize video selection queries (one target object per query)
+Train the BERT regression model on YouTube-8M Segments data and apply the online learning strategy. (The process would be similar for HowTo100M data.)
+```
+cd ./optimizer/BERT_YouTube
+python train_youtube.py
+python finetune_youtube.py
+```
+
+Optimize video selection queries by the model built with videos
 ```
 cd ./optimizer
 python optimizer.py --all_candidates True --optimization visual --dataset Youtube-8M_seg --repeat 1 --checkpoint finetune_youtube/checkpoint-1500 --index_percent 100 --result_name _finetune_all
+python optimizer_2obj.py --all_candidates True --optimization visual --dataset Youtube-8M_seg --repeat 1 --checkpoint finetune_youtube/checkpoint-1500 --result_name _finetune_2obj_all
 ```
 
-Optimize video selection queries (two target objects per query)
+Collect pageview statistics of Wikipedia
 ```
 cd ./optimizer
-python optimizer_2obj.py --all_candidates True --optimization visual --dataset Youtube-8M_seg --repeat 1 --checkpoint finetune_youtube/checkpoint-1500 --result_name _finetune_2obj_all
+python obj_pageview.py
+```
+
+Optimize video selection queries by the model built without videos
+```
+cd ./optimizer
+python optimizer.py --all_candidates True --optimization kg --dataset Youtube-8M_seg --repeat 1 --checkpoint finetune_youtube/checkpoint-1500 --index_percent 100 --result_name _finetune_all
+python optimizer_2obj.py --all_candidates True --optimization kg --dataset Youtube-8M_seg --repeat 1 --checkpoint finetune_youtube/checkpoint-1500 --result_name _finetune_2obj_all
 ```
