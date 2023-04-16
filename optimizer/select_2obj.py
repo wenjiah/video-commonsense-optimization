@@ -65,7 +65,10 @@ with open("../model/frequency_2obj_How.txt", 'rb') as f:
 
 selected_keys = []
 for comb in obj_freq:
-    if obj_freq[comb] >= 150 and comb[0].replace(" ", "_") in numberbatch_model and comb[1].replace(" ", "_") in numberbatch_model:
+    # if obj_freq[comb] >= 100 and comb[0].replace(" ", "_") in numberbatch_model and comb[1].replace(" ", "_") in numberbatch_model:
+    # if obj_freq[comb] >= 50 and obj_freq[comb] < 100 and comb[0].replace(" ", "_") in numberbatch_model and comb[1].replace(" ", "_") in numberbatch_model:
+    # if obj_freq[comb] >= 10 and obj_freq[comb] < 50 and comb[0].replace(" ", "_") in numberbatch_model and comb[1].replace(" ", "_") in numberbatch_model:
+    if obj_freq[comb] >= 10 and comb[0].replace(" ", "_") in numberbatch_model and comb[1].replace(" ", "_") in numberbatch_model:
         selected_keys.append((te.columns_.index(comb[0]), te.columns_.index(comb[1])))
 
 
@@ -88,10 +91,18 @@ while len(synset_queue) > 0:
     for lemma in lemmas:
         vague_objects.add(lemma.name())
 
+selected_keys_new = []
 for selected_key in selected_keys:
-    if te.columns_[selected_key[0]].replace(" ", "_") in vague_objects or te.columns_[selected_key[1]].replace(" ", "_") in vague_objects:
-        selected_keys.remove(selected_key)
+    if (te.columns_[selected_key[0]].replace(" ", "_") not in vague_objects) and (te.columns_[selected_key[1]].replace(" ", "_") not in vague_objects):
+        selected_keys_new.append(selected_key)
+selected_keys = selected_keys_new
 
-# with open("../result/Youtube-8M_seg/selected_2keys_high_unvague_Youtube.txt", 'wb') as f:
-with open("../result/HowTo100M/selected_2keys_high_unvague_How.txt", 'wb') as f:
+# with open("../../BERT_result/raw_result/Youtube-8M_seg/selected_2keys_high_unvague_Youtube.txt", 'wb') as f: # >= 100
+# with open("../../BERT_result/raw_result/HowTo100M/selected_2keys_high_unvague_How.txt", 'wb') as f: # >= 100
+# with open("../../BERT_result/raw_result/Youtube-8M_seg/selected_2keys_medium_unvague_Youtube.txt", 'wb') as f: # >= 50, < 100
+# with open("../../BERT_result/raw_result/HowTo100M/selected_2keys_medium_unvague_How.txt", 'wb') as f: # >= 50, < 100
+# with open("../../BERT_result/raw_result/Youtube-8M_seg/selected_2keys_low_unvague_Youtube.txt", 'wb') as f: # >= 10, < 50
+# with open("../../BERT_result/raw_result/HowTo100M/selected_2keys_low_unvague_How.txt", 'wb') as f: # >= 10, < 50
+# with open("../../BERT_result/raw_result/Youtube-8M_seg/selected_2keys_unvague_Youtube.txt", 'wb') as f: # >= 10
+with open("../../BERT_result/raw_result/HowTo100M/selected_2keys_unvague_How.txt", 'wb') as f: # >= 10
     pickle.dump(selected_keys, f)
