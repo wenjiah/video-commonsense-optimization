@@ -12,7 +12,9 @@ from mlxtend.preprocessing import TransactionEncoder
 import gensim
 import argparse
 import cv2
+import json
 from BERT_YouTube.predict_2obj_youtube import predict_prob_2obj_bert
+from prob_from_kg import cond_prob
 
 def construct_dataset(train_dir, test_dir, test_true_dir, key_candidates, finetune_filename):
     '''
@@ -88,8 +90,10 @@ def video_pred_prob(optimization, test_dataset, te, dataset_list, key_candidates
     Apply a classifier to predict the existence probability of the desired object in a video clip.
     Then each item is in the form of [true_label, pred_prob]
     '''
-    if optimization == 'conceptNumber':
+    if optimization == 'kg':
         numberbatch_model = gensim.models.KeyedVectors.load_word2vec_format('../data/ConceptNet/numberbatch-en-19.08.txt', binary=False)
+        page_views_avg = pd.read_pickle(dataset_name+"_pageview.pkl")
+        page_views_prob = np.sqrt(page_views_avg/max(page_views_avg))
 
         start_time_1 = time.time()
         for i in range(len(key_candidates)):
@@ -97,12 +101,12 @@ def video_pred_prob(optimization, test_dataset, te, dataset_list, key_candidates
 
             for j in range(len(dataset_list[i])):
                 test_object = test_dataset[j]
-                video_prob = 1
+                cond_object = []
                 for obj in test_object:
                     if obj != te.columns_[target_keys[0]] and obj != te.columns_[target_keys[1]] and obj.replace(" ", "_") in numberbatch_model:
-                        video_prob *= 1-max(0, numberbatch_model.similarity(te.columns_[target_keys[0]].replace(" ", "_"), obj.replace(" ", "_")))*max(0, numberbatch_model.similarity(te.columns_[target_keys[1]].replace(" ", "_"), obj.replace(" ", "_")))
-                video_prob = 1-video_prob
-                dataset_list[i][j].append(video_prob)
+                        cond_object.append(obj)
+                video_prob = cond_prob(cond_object=cond_object, target_obj=[te.columns_[target_keys[0]], te.columns_[target_keys[1]]], embeddings=numberbatch_model, single_prob_df=page_views_prob)
+                dataset_list[i][j].append(min(video_prob, 1))
         print("prob prediction time: ", time.time()-start_time_1)
 
     elif optimization == 'visual':
@@ -126,6 +130,51 @@ def video_pred_prob(optimization, test_dataset, te, dataset_list, key_candidates
         for i in range(len(key_candidates)):
             for j in range(len(dataset_list[i])):
                 dataset_list[i][j].append(random.random())
+        print("prob prediction time: ", time.time()-start_time_1)
+
+    elif optimization == "focusEZ":
+        start_time_1 = time.time()
+        if dataset_name == "Youtube-8M_seg":
+            cluster_dir = "../data/Youtube-8M_seg/index_cluster_youtube.json"
+        else:
+            cluster_dir = "../data/HowTo100M/index_cluster_how.json"
+        with open(cluster_dir, "r") as f:
+            index_cluster = json.load(f)
+
+        for i in range(len(key_candidates)):
+            target_keys = key_candidates[i]
+            for cluster_id in index_cluster.keys():
+                if index_cluster[cluster_id][1][target_keys[0]] == 1 and index_cluster[cluster_id][1][target_keys[1]] == 1:
+                    for j in index_cluster[cluster_id][0]:
+                        dataset_list[i][j].append(1)
+                else:
+                    for j in index_cluster[cluster_id][0]:
+                        dataset_list[i][j].append(0)
+            for j in range(len(dataset_list[i])):
+                if te.columns_[target_keys[0]] in test_dataset[j] and te.columns_[target_keys[1]] in test_dataset[j]:
+                    dataset_list[i][j][-1] = 2
+        print("prob prediction time: ", time.time()-start_time_1)
+
+    elif optimization == 'kgEZ':
+        numberbatch_model = gensim.models.KeyedVectors.load_word2vec_format('../data/ConceptNet/numberbatch-en-19.08.txt', binary=False)
+        page_views_avg = pd.read_pickle(dataset_name+"_pageview.pkl")
+        page_views_prob = np.sqrt(page_views_avg/max(page_views_avg))
+
+        start_time_1 = time.time()
+        for i in range(len(key_candidates)):
+            target_keys = key_candidates[i]
+
+            for j in range(len(dataset_list[i])):
+                test_object = test_dataset[j]
+                if te.columns_[target_keys[0]] in test_object and te.columns_[target_keys[1]] in test_object:
+                    dataset_list[i][j].append(2)
+                    continue
+                cond_object = []
+                for obj in test_object:
+                    if obj != te.columns_[target_keys[0]] and obj != te.columns_[target_keys[1]] and obj.replace(" ", "_") in numberbatch_model:
+                        cond_object.append(obj)
+                video_prob = cond_prob(cond_object=cond_object, target_obj=[te.columns_[target_keys[0]], te.columns_[target_keys[1]]], embeddings=numberbatch_model, single_prob_df=page_views_prob)
+                dataset_list[i][j].append(min(video_prob, 1))
         print("prob prediction time: ", time.time()-start_time_1)
     
     elif optimization == "visualEZ":
