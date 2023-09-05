@@ -70,3 +70,10 @@ cd ./optimizer
 python optimizer.py --all_candidates True --optimization kg --dataset Youtube-8M_seg --repeat 1 --checkpoint finetune_youtube/checkpoint-1500 --index_percent 100 --result_name _finetune_all
 python optimizer_2obj.py --all_candidates True --optimization kg --dataset Youtube-8M_seg --repeat 1 --checkpoint finetune_youtube/checkpoint-1500 --result_name _finetune_2obj_all
 ```
+
+Use LLM(GPT-3.5) as a baseline to predict the missing objects so as to optimize video selection queries
+```
+cd ./optimizer
+python optimizer.py --all_candidates True --optimization llmEZ --dataset Youtube-8M_seg --repeat 1 --checkpoint finetune_youtube/checkpoint-1500 --index_percent 100 --result_name _2_finetune_all --prompt_style 2
+```
+See the ten tested prompts in *./optimizer/GPT_prompts.pdf*
