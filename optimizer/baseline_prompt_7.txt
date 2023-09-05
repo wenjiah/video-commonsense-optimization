@@ -1,0 +1,7 @@
+Each item in the list below shows different kinds of objects seen in a corresponding video:
+
+[KEYWORDS]
+
+For each set of observations in the list, provide an integer score from 0 to 10 about whether the video also contains [TARGET], where 10 means the corresponding is very likely to also contain a [TARGET], and 0 means it is very unlikely to contain a [TARGET].   Format your output as a python list where the position of your score estimate corresponds to the position in the input list.
+
+

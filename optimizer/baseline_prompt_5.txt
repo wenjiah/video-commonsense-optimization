@@ -1,0 +1,12 @@
+The data below represents a list of videos where, for each video, we include a list of objects that we detected in a sampled part of the video. The data is organized in the following format:
+[[obj1, obj2],
+[obj3, obj4, obj5],
+…]
+For example, [obj1, obj2] represents two distinct objects that appear in video 0, [obj3, obj4, obj5] represents three distinct objects that appear in video 1, and so on.
+Please rank the videos based on the likelihood that they also contain an object called [TARGET], given the objects that we have already detected in the videos:
+
+[KEYWORDS]
+
+Rank them from highest to lowest likelihood.
+
+

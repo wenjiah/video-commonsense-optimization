@@ -1,0 +1,7 @@
+Here is the captured objects in each video, each line represents a video:
+“““
+[KEYWORDS]
+”””
+The target object is [TARGET]. Please rank the videos accordingly and give brief explanations.
+
+

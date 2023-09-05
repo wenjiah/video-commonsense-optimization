@@ -1,0 +1,5 @@
+Given a target object and a set of videos, your goal is to rank these videos according to the likelihood of the video containing the target object. Each video is presented in a line, in the form of Video <index>:<content>. The target object is  [TARGET]. You should use the content of a video to determine if it contains the target object. You should return the index of the videos in the ranked order of likelihood, separated by comma.
+Videos:
+[KEYWORDS]
+Answer:
+

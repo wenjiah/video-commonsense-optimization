@@ -1,0 +1,7 @@
+Given the following sets of keywords:
+
+[KEYWORDS]
+
+Reorder them based on their relevance with the [TARGET] in commonsense knowledge. Print the reordered list of row numbers for the original sets, each one a newline.
+
+

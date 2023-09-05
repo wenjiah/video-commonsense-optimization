@@ -1,0 +1,7 @@
+Given the following sets of keywords, each set per line:
+
+[KEYWORDS]
+
+Reorder them based on their relevance with the [TARGET].
+
+

@@ -1,0 +1,8 @@
+Given the following list of videos and the objects detected in each, please rank the videos according to the likelihood of containing a specific target object. The list of videos and their detected objects is as follows:
+
+[KEYWORDS]
+
+The target object we are interested in is [TARGET]. Please analyze the data and provide a ranking of the videos from most likely to least likely containing the target object.
+
+
+
