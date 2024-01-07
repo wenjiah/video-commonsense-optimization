@@ -54,8 +54,8 @@ python finetune_youtube.py
 Optimize video selection queries by the model built with videos
 ```
 cd ./optimizer
-python optimizer.py --all_candidates True --optimization visual --dataset Youtube-8M_seg --repeat 1 --checkpoint finetune_youtube/checkpoint-1500 --index_percent 100 --result_name _finetune_all
-python optimizer_2obj.py --all_candidates True --optimization visual --dataset Youtube-8M_seg --repeat 1 --checkpoint finetune_youtube/checkpoint-1500 --result_name _finetune_2obj_all
+python optimizer.py --all_candidates True --optimization visualEZ --dataset Youtube-8M_seg --repeat 1 --checkpoint finetune_youtube/checkpoint-1500 --index_percent 100 --result_name _finetune_all
+python optimizer_2obj.py --all_candidates True --optimization visualEZ --dataset Youtube-8M_seg --repeat 1 --checkpoint finetune_youtube/checkpoint-1500 --result_name _finetune_2obj_all
 ```
 
 Collect pageview statistics of Wikipedia
@@ -67,11 +67,25 @@ python obj_pageview.py
 Optimize video selection queries by the model built without videos
 ```
 cd ./optimizer
-python optimizer.py --all_candidates True --optimization kg --dataset Youtube-8M_seg --repeat 1 --checkpoint finetune_youtube/checkpoint-1500 --index_percent 100 --result_name _finetune_all
-python optimizer_2obj.py --all_candidates True --optimization kg --dataset Youtube-8M_seg --repeat 1 --checkpoint finetune_youtube/checkpoint-1500 --result_name _finetune_2obj_all
+python optimizer.py --all_candidates True --optimization kgEZ --dataset Youtube-8M_seg --repeat 1 --checkpoint finetune_youtube/checkpoint-1500 --index_percent 100 --result_name _finetune_all
+python optimizer_2obj.py --all_candidates True --optimization kgEZ --dataset Youtube-8M_seg --repeat 1 --checkpoint finetune_youtube/checkpoint-1500 --result_name _finetune_2obj_all
 ```
 
-Use LLM(GPT-3.5) as a baseline to predict the missing objects so as to optimize video selection queries
+Optimize video selection queries by other baselines
+```
+cd ./optimizer
+python optimizer.py --all_candidates True --optimization focusEZ --dataset Youtube-8M_seg --repeat 1 --checkpoint finetune_youtube/checkpoint-1500 --index_percent 100 --result_name _finetune_all
+python optimizer.py --all_candidates True --optimization diffEZ --dataset Youtube-8M_seg --repeat 1 --checkpoint finetune_youtube/checkpoint-1500 --index_percent 100 --result_name _finetune_all
+python optimizer.py --all_candidates True --optimization randomEZ --dataset Youtube-8M_seg --repeat 1 --checkpoint finetune_youtube/checkpoint-1500 --index_percent 100 --result_name _finetune_all
+```
+
+Use pre-trained BERT model to predict the existence probability of target objects
+```
+cd ./optimizer
+python optimizer.py --all_candidates True --optimization BertEZ --dataset Youtube-8M_seg --repeat 1 --checkpoint finetune_youtube/checkpoint-1500 --index_percent 100 --result_name _finetune_all
+```
+
+Use LLM(GPT-3.5) to rank videos so as to optimize video selection queries
 ```
 cd ./optimizer
 python optimizer.py --all_candidates True --optimization llmEZ --dataset Youtube-8M_seg --repeat 1 --checkpoint finetune_youtube/checkpoint-1500 --index_percent 100 --result_name _2_finetune_all --prompt_style 2
