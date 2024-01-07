@@ -234,6 +234,18 @@ def video_pred_prob(optimization, test_dataset, te, dataset_list, key_candidates
                 dataset_list[i][j].append(min(video_prob, 1))
         print("prob prediction time: ", time.time()-start_time_1)
 
+    elif optimization == "BertEZ":
+        start_time_1 = time.time()
+        for i in range(len(key_candidates)):
+            target_key = key_candidates[i]
+            prediction_prob = predict_prob_bert(test_dataset=test_dataset, te=te, target_key=target_key, model_dir="../model_prob_info/bert-base-uncased")
+            for j in range(len(dataset_list[i])):
+                if te.columns_[target_key] not in test_dataset[j]:
+                    dataset_list[i][j].append(prediction_prob[j])
+                else:
+                    dataset_list[i][j].append(2)
+        print("prob prediction time: ", time.time()-start_time_1)
+
     elif optimization == 'visualEZ': 
         start_time_1 = time.time()
         for i in range(len(key_candidates)):
@@ -403,7 +415,7 @@ if __name__ == '__main__':
         if dataset_name == "Youtube-8M_seg":
             with open("../../BERT_result/raw_result/Youtube-8M_seg/selected_keys_10_unvague_Youtube.txt", 'rb') as f:
                 key_candidates = pickle.load(f)
-                key_candidates = key_candidates[:10]
+                # key_candidates = key_candidates[:10]
         elif dataset_name == "HowTo100M":
             with open("../../BERT_result/raw_result/HowTo100M/selected_keys_10_unvague_How.txt", 'rb') as f:
                 key_candidates = pickle.load(f)
@@ -436,7 +448,7 @@ if __name__ == '__main__':
         process_num_list = process(predicted_dataset_list)
         process_num_avg_list += np.array(process_num_list)
     process_num_avg_list /= repeat_times     
-    print("Total time of 10 processing with ", optimization, ": ", time.time()-start_time_total)   
+    # print("Total time of 10 processing with ", optimization, ": ", time.time()-start_time_total)   
 
     store_dict = {}
     store_dict["process num"] = process_num_avg_list
@@ -452,6 +464,6 @@ if __name__ == '__main__':
         suffix = "How"
     else:
         raise NameError('Wrong Dataset Name')
-    # with open("../../BERT_result/raw_result/"+dataset_name+"/opt_"+suffix+"_"+optimization+result_name+".txt", 'wb') as f:
-    # # with open("../../BERT_result/raw_result/"+dataset_name+"/opt_"+suffix+"_"+optimization+"_diff1_finetune_all.txt", 'wb') as f:
-    #     pickle.dump(store_dict, f)
+    with open("../../BERT_result/raw_result/"+dataset_name+"/opt_"+suffix+"_"+optimization+result_name+".txt", 'wb') as f:
+    # with open("../../BERT_result/raw_result/"+dataset_name+"/opt_"+suffix+"_"+optimization+"_diff1_finetune_all.txt", 'wb') as f:
+        pickle.dump(store_dict, f)
